@@ -1,0 +1,7 @@
+# Workspace-private orchestration state
+.codex/local/automation.toml
+
+# Local environment overrides (keep documented examples)
+.env
+.env.*
+!.env.example

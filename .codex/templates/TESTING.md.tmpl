@@ -1,0 +1,54 @@
+# Testing
+
+This file is the root testing entrypoint. Keep product README instructions
+short; record detailed MVP and slice procedures here and in the linked
+`.orchestration/` evidence files.
+
+## Toolchain
+
+| Purpose | Tool/version | Command |
+| --- | --- | --- |
+| Lint | <tool and pinned/declared version> | `<lint command>` |
+| Build | <tool and pinned/declared version> | `<build command>` |
+| Test | <tool and pinned/declared version> | `<test command>` |
+
+Run in this order and stop at the first failure:
+
+```text
+<lint command>
+<build command>
+<test command>
+```
+
+## Environment rules
+
+- Use local or disposable resources by default.
+- Do not mutate production.
+- A shared, paid, or externally mutable non-production test environment needs
+  the exact bound `APPROVE TEST ENVIRONMENT <environment-id>` command.
+- Never commit credentials, raw logs, or production data. Record sanitized
+  evidence and artifact digests instead.
+
+## MVP verification
+
+| MVP | Procedure | Acceptance report |
+| --- | --- | --- |
+| `MVP-001` | [testing](.orchestration/mvps/MVP-001/testing.md) | [report](.orchestration/mvps/MVP-001/acceptance-report.md) |
+
+## Slice verification
+
+| Slice | Procedure | Acceptance report |
+| --- | --- | --- |
+| `MVP-001-S001` | [testing](.orchestration/mvps/MVP-001/slices/MVP-001-S001/testing.md) | [report](.orchestration/mvps/MVP-001/slices/MVP-001-S001/acceptance-report.md) |
+
+## Final slice gates
+
+- Record the fresh Security assessment and provider issues against the exact
+  candidate commit.
+- After Security clears, record the Docs-only commit, source-owned coverage,
+  and checks proving documentation did not change behavior.
+
+## Rollback and recovery
+
+<Link the repository's non-production rollback exercises and, when deployment
+is PRD-defined, the release-scoped production rollback plan.>

@@ -1,0 +1,223 @@
+# Canonical registry for exact, proposal-bound workflow commands.
+schema_version = 2
+case_sensitive = true
+full_line_match = true
+one_command_per_message = true
+
+[identifiers]
+mvp = '^MVP-[0-9]{3}$'
+slice = '^MVP-[0-9]{3}-S[0-9]{3}$'
+reviewer_finding = '^MVP-[0-9]{3}-S[0-9]{3}-C[0-9]{2,}-R[0-9]{3}$'
+tester_finding = '^MVP-[0-9]{3}-S[0-9]{3}-C[0-9]{2,}-T[0-9]{3}$'
+security_finding = '^MVP-[0-9]{3}-S[0-9]{3}-SEC-[0-9]{3}$'
+feature_branch = '^feature/mvp-[0-9]{3}-s[0-9]{3}-[a-z0-9]+(?:-[a-z0-9]+)*$'
+
+[[command]]
+key = "approve_repository_bootstrap"
+syntax = "APPROVE REPOSITORY BOOTSTRAP"
+pattern = '^APPROVE REPOSITORY BOOTSTRAP$'
+automatable = false
+effect = "Apply the exact bound bootstrap preview, including the one-time new-repository genesis operation when applicable."
+
+[[command]]
+key = "approve_readme_overwrite"
+syntax = "APPROVE README OVERWRITE"
+pattern = '^APPROVE README OVERWRITE$'
+automatable = false
+effect = "Apply the displayed meaningful README replacement only."
+
+[[command]]
+key = "set_repo_public"
+syntax = "SET REPO PUBLIC"
+pattern = '^SET REPO PUBLIC$'
+automatable = false
+effect = "Stage public visibility; does not change a remote by itself."
+
+[[command]]
+key = "approve_repository_visibility"
+syntax = "APPROVE REPOSITORY VISIBILITY"
+pattern = '^APPROVE REPOSITORY VISIBILITY$'
+automatable = false
+effect = "Apply the bound visibility change for an existing repository."
+
+[[command]]
+key = "set_license"
+syntax = "SET LICENSE <SPDX-identifier|NONE>"
+pattern = '^SET LICENSE (?:[A-Za-z0-9][A-Za-z0-9.+-]*|NONE)$'
+automatable = false
+effect = "Set the pending target-repository license decision."
+
+[[command]]
+key = "approve_delivery_plan"
+syntax = "APPROVE DELIVERY PLAN"
+pattern = '^APPROVE DELIVERY PLAN$'
+automatable = false
+effect = "Persist the displayed versioned companion delivery plan."
+
+[[command]]
+key = "approve_prd_update"
+syntax = "APPROVE PRD UPDATE"
+pattern = '^APPROVE PRD UPDATE$'
+automatable = false
+effect = "Authorize Developer to apply only the displayed PRD/changelog diff bound to the source PRD, grill-log, result, proposal, branch, and base digests."
+
+[[command]]
+key = "approve_slice_plan"
+syntax = "APPROVE SLICE PLAN <slice-id>"
+pattern = '^APPROVE SLICE PLAN MVP-[0-9]{3}-S[0-9]{3}$'
+automation_type = "SLICE PLAN"
+automatable = true
+effect = "Create tracking artifacts and the verified feature branch, persist the baseline, and run implementation/review/test cycles."
+
+[[command]]
+key = "approve_slice"
+syntax = "APPROVE SLICE <slice-id>"
+pattern = '^APPROVE SLICE MVP-[0-9]{3}-S[0-9]{3}$'
+automation_type = "SLICE"
+automatable = true
+effect = "Publish the accepted feature branch and create its ready PR/MR into the integration branch."
+
+[[command]]
+key = "approve_feature_merge"
+syntax = "APPROVE FEATURE MERGE <slice-id>"
+pattern = '^APPROVE FEATURE MERGE MVP-[0-9]{3}-S[0-9]{3}$'
+automation_type = "FEATURE MERGE"
+automatable = true
+effect = "Merge the verified feature PR/MR into the integration branch; never targets production."
+
+[[command]]
+key = "approve_pr_rebase"
+syntax = "APPROVE PR REBASE <slice-id>"
+pattern = '^APPROVE PR REBASE MVP-[0-9]{3}-S[0-9]{3}$'
+automatable = false
+effect = "Rebase the displayed published feature branch with force-with-lease and invalidate stale commit approvals."
+
+[[command]]
+key = "accept_review"
+syntax = "ACCEPT REVIEW <finding-ids>"
+pattern = '^ACCEPT REVIEW MVP-[0-9]{3}-S[0-9]{3}-C[0-9]{2,}-[RT][0-9]{3}(?: MVP-[0-9]{3}-S[0-9]{3}-C[0-9]{2,}-[RT][0-9]{3})*$'
+automatable = false
+effect = "Accept the listed findings for remediation and begin another Developer/Reviewer/Tester cycle."
+
+[[command]]
+key = "disregard_review"
+syntax = "DISREGARD REVIEW <finding-ids>"
+pattern = '^DISREGARD REVIEW MVP-[0-9]{3}-S[0-9]{3}-C[0-9]{2,}-[RT][0-9]{3}(?: MVP-[0-9]{3}-S[0-9]{3}-C[0-9]{2,}-[RT][0-9]{3})*$'
+automatable = false
+requires_confirmation = "confirm_review_disregard"
+effect = "Stage P2-only risk acceptance for the listed findings; does not accept risk yet."
+
+[[command]]
+key = "confirm_review_disregard"
+syntax = "CONFIRM REVIEW DISREGARD <finding-ids>"
+pattern = '^CONFIRM REVIEW DISREGARD MVP-[0-9]{3}-S[0-9]{3}-C[0-9]{2,}-[RT][0-9]{3}(?: MVP-[0-9]{3}-S[0-9]{3}-C[0-9]{2,}-[RT][0-9]{3})*$'
+automatable = false
+effect = "Confirm the unchanged, displayed P2 risk proposal and create linked technical-debt tracking."
+
+[[command]]
+key = "challenge_review"
+syntax = "CHALLENGE REVIEW <finding-ids>"
+pattern = '^CHALLENGE REVIEW MVP-[0-9]{3}-S[0-9]{3}-C[0-9]{2,}-[RT][0-9]{3}(?: MVP-[0-9]{3}-S[0-9]{3}-C[0-9]{2,}-[RT][0-9]{3})*$'
+automatable = false
+effect = "Open an evidence-based finding dispute for fresh Reviewer adjudication."
+
+[[command]]
+key = "approve_test_environment"
+syntax = "APPROVE TEST ENVIRONMENT <environment-id>"
+pattern = '^APPROVE TEST ENVIRONMENT [A-Za-z0-9][A-Za-z0-9._-]*$'
+automatable = false
+effect = "Use only the displayed shared or paid non-production test environment."
+
+[[command]]
+key = "fix_security_risk"
+syntax = "FIX SECURITY RISK <security-id>"
+pattern = '^FIX SECURITY RISK MVP-[0-9]{3}-S[0-9]{3}-SEC-[0-9]{3}$'
+automatable = false
+effect = "Accept the named security finding for Developer remediation, then require fresh review, test, and security evidence."
+
+[[command]]
+key = "ignore_security_risk"
+syntax = "IGNORE SECURITY RISK <security-id>"
+pattern = '^IGNORE SECURITY RISK MVP-[0-9]{3}-S[0-9]{3}-SEC-[0-9]{3}$'
+automatable = false
+requires_confirmation = "confirm_security_risk_ignore"
+effect = "Stage P2-only security risk acceptance for the unchanged finding; does not resume delivery yet."
+
+[[command]]
+key = "confirm_security_risk_ignore"
+syntax = "CONFIRM SECURITY RISK IGNORE <security-id>"
+pattern = '^CONFIRM SECURITY RISK IGNORE MVP-[0-9]{3}-S[0-9]{3}-SEC-[0-9]{3}$'
+automatable = false
+effect = "Confirm unchanged P2 security risk acceptance, link technical debt, and clear only that finding's pause."
+
+[[command]]
+key = "approve_ci_pipeline"
+syntax = "APPROVE CI PIPELINE"
+pattern = '^APPROVE CI PIPELINE$'
+automatable = false
+effect = "Apply the displayed existing-repository CI/toolchain change."
+
+[[command]]
+key = "approve_mvp_release"
+syntax = "APPROVE MVP RELEASE <mvp-id>"
+pattern = '^APPROVE MVP RELEASE MVP-[0-9]{3}$'
+automatable = false
+effect = "Create the verified integration-to-production release PR/MR; never merges or deploys it."
+
+[[command]]
+key = "approve_hotfix_plan"
+syntax = "APPROVE HOTFIX PLAN <issue-id>"
+pattern = '^APPROVE HOTFIX PLAN [A-Za-z0-9#][A-Za-z0-9._:#/-]*$'
+automatable = false
+effect = "Create the approved production hotfix branch and run the evidence workflow."
+
+[[command]]
+key = "approve_hotfix_release"
+syntax = "APPROVE HOTFIX RELEASE <issue-id>"
+pattern = '^APPROVE HOTFIX RELEASE [A-Za-z0-9#][A-Za-z0-9._:#/-]*$'
+automatable = false
+effect = "Create the verified hotfix PR/MR into production; never merges or deploys it."
+
+[[command]]
+key = "approve_deploy_production"
+syntax = "APPROVE DEPLOY PRODUCTION <release-id>"
+pattern = '^APPROVE DEPLOY PRODUCTION [A-Z][A-Z0-9-]*$'
+automatable = false
+requires_confirmation = "confirm_production_deploy"
+effect = "Stage the exact displayed production deployment; does not execute it yet."
+
+[[command]]
+key = "confirm_production_deploy"
+syntax = "CONFIRM PRODUCTION DEPLOY <release-id>"
+pattern = '^CONFIRM PRODUCTION DEPLOY [A-Z][A-Z0-9-]*$'
+automatable = false
+effect = "Execute only the unchanged release-scoped production deployment preview."
+
+[[command]]
+key = "auto_approve"
+syntax = "AUTO APPROVE <SLICE PLAN|SLICE|FEATURE MERGE>"
+pattern = '^AUTO APPROVE (?:SLICE PLAN|SLICE|FEATURE MERGE)$'
+automatable = false
+effect = "Stage one workspace-local automation proposal."
+
+[[command]]
+key = "confirm_automation"
+syntax = "CONFIRM AUTOMATION"
+pattern = '^CONFIRM AUTOMATION$'
+automatable = false
+effect = "Activate the one unchanged pending workspace automation proposal."
+
+[[command]]
+key = "disable_auto_approve"
+syntax = "DISABLE AUTO APPROVE <SLICE PLAN|SLICE|FEATURE MERGE>"
+pattern = '^DISABLE AUTO APPROVE (?:SLICE PLAN|SLICE|FEATURE MERGE)$'
+automatable = false
+effect = "Disable the named workspace automation immediately."
+
+[[command]]
+key = "show_auto_approvals"
+syntax = "SHOW AUTO APPROVALS"
+pattern = '^SHOW AUTO APPROVALS$'
+automatable = false
+read_only = true
+effect = "Display disabled, pending, active, imported, and suspended automation state."

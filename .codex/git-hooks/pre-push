@@ -1,0 +1,72 @@
+#!/bin/sh
+# Block direct updates to protected remote branches. The only local exception
+# is initial creation of the bound main anchor or dev bootstrap branch.
+
+set -u
+
+hook_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+# shellcheck source=lib.sh
+. "$hook_dir/lib.sh"
+
+receipt=$(guard_receipt_path protected-push 2>/dev/null || true)
+blocked=0
+
+while read -r local_ref local_sha remote_ref remote_sha; do
+  branch=$(guard_protected_branch_from_ref "$remote_ref") || continue
+
+  case "$local_sha" in
+    0000000000000000000000000000000000000000|0000000000000000000000000000000000000000000000000000000000000000)
+      guard_error "deleting protected remote branch '$branch' is blocked"
+      blocked=1
+      continue
+      ;;
+  esac
+
+  case "$remote_sha" in
+    0000000000000000000000000000000000000000|0000000000000000000000000000000000000000000000000000000000000000)
+      remote_is_unborn=1
+      ;;
+    *) remote_is_unborn=0 ;;
+  esac
+
+  if [ "$remote_is_unborn" -ne 1 ]; then
+    guard_error "direct updates to protected remote branch '$branch' are blocked; use a PR/MR"
+    blocked=1
+    continue
+  fi
+
+  if ! guard_receipt_header_is_valid "$receipt" \
+    || ! guard_receipt_has "$receipt" branch "$branch" \
+    || ! guard_receipt_has "$receipt" expected_commit "$local_sha" \
+    || ! guard_receipt_has "$receipt" remote_baseline "$remote_sha"; then
+    guard_error "initial push of protected branch '$branch' requires an exact bound repository-bootstrap receipt"
+    blocked=1
+    continue
+  fi
+
+  case "$branch" in
+    main)
+      if ! guard_is_parentless_empty_commit "$local_sha"; then
+        guard_error "initial main push must contain only the fileless parentless anchor commit"
+        blocked=1
+      else
+        guard_error "allowing the bound initial main anchor push; install provider protection immediately"
+      fi
+      ;;
+    dev)
+      if ! guard_is_initial_dev_bootstrap_commit "$local_sha"; then
+        guard_error "initial dev push must contain the anchor plus exactly one bootstrap commit"
+        blocked=1
+      else
+        guard_error "allowing the bound initial dev bootstrap push; install provider protection immediately"
+      fi
+      ;;
+    *)
+      guard_error "initial protected push is not allowed for '$branch'"
+      blocked=1
+      ;;
+  esac
+done
+
+[ "$blocked" -eq 0 ] || exit 1
+exit 0

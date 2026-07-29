@@ -1,0 +1,105 @@
+# Experimental Codex exec-policy prompts for high-impact commands. Rules only
+# affect commands requested outside the sandbox and are a guardrail, not a
+# substitute for Git hooks, exact workflow approvals, or provider protection.
+
+prefix_rule(
+    pattern = ["git", "push"],
+    decision = "prompt",
+    justification = "Review the exact remote and refspec. Protected branches require the PR/MR workflow; initial bootstrap also requires a bound Git-hook receipt.",
+    match = [
+        "git push origin feature/mvp-001-s001-example",
+        "git push origin main",
+    ],
+)
+
+prefix_rule(
+    pattern = ["git", "push", "--force"],
+    decision = "forbidden",
+    justification = "Plain force pushes are forbidden. For an approved published feature rebase, use force-with-lease after APPROVE PR REBASE <slice-id>.",
+    match = ["git push --force origin feature/mvp-001-s001-example"],
+    not_match = ["git push --force-with-lease origin feature/mvp-001-s001-example"],
+)
+
+prefix_rule(
+    pattern = ["git", "push", "-f"],
+    decision = "forbidden",
+    justification = "Plain force pushes are forbidden. Use the approved force-with-lease workflow for published feature rebases.",
+    match = ["git push -f origin feature/mvp-001-s001-example"],
+)
+
+prefix_rule(
+    pattern = ["git", "push", "--force-with-lease"],
+    decision = "prompt",
+    justification = "A published feature rebase requires exact APPROVE PR REBASE <slice-id> and invalidates commit-scoped approvals.",
+    match = ["git push --force-with-lease origin feature/mvp-001-s001-example"],
+)
+
+prefix_rule(
+    pattern = ["git", "merge"],
+    decision = "prompt",
+    justification = "Confirm the current branch and approved merge path. No agent may merge to main; feature-to-dev merging needs its slice authority.",
+    match = ["git merge --no-ff feature/mvp-001-s001-example"],
+)
+
+prefix_rule(
+    pattern = ["git", "rebase"],
+    decision = "prompt",
+    justification = "Confirm baseline and publication state before rewriting commits; published rebases need explicit approval.",
+    match = ["git rebase origin/dev"],
+)
+
+prefix_rule(
+    pattern = ["git", "reset", "--hard"],
+    decision = "prompt",
+    justification = "Hard reset can destroy uncommitted work. Preserve unrelated changes and use a disposable worktree when possible.",
+    match = ["git reset --hard HEAD"],
+)
+
+prefix_rule(
+    pattern = ["git", "clean"],
+    decision = "prompt",
+    justification = "Git clean can permanently remove untracked work. Inspect exact targets and obtain destructive-action authority first.",
+    match = ["git clean -fd"],
+)
+
+prefix_rule(
+    pattern = ["gh", "pr", "merge"],
+    decision = "prompt",
+    justification = "Verify the PR target and exact merge authority. Main merges are always human actions in the provider UI.",
+    match = ["gh pr merge 42 --merge"],
+)
+
+prefix_rule(
+    pattern = ["glab", "mr", "merge"],
+    decision = "prompt",
+    justification = "Verify the MR target and exact merge authority. Main merges are always human actions in the provider UI.",
+    match = ["glab mr merge 42 --merge-when-pipeline-succeeds"],
+)
+
+prefix_rule(
+    pattern = ["terraform", ["apply", "destroy"]],
+    decision = "prompt",
+    justification = "Infrastructure mutation requires an approved environment-specific plan; production also requires both deployment confirmations.",
+    match = ["terraform apply saved.tfplan", "terraform destroy"],
+)
+
+prefix_rule(
+    pattern = ["tofu", ["apply", "destroy"]],
+    decision = "prompt",
+    justification = "Infrastructure mutation requires an approved environment-specific plan; production also requires both deployment confirmations.",
+    match = ["tofu apply saved.tfplan", "tofu destroy"],
+)
+
+prefix_rule(
+    pattern = ["kubectl", ["apply", "delete", "replace", "rollout"]],
+    decision = "prompt",
+    justification = "Cluster mutation requires an approved non-production test environment or the two-step production deployment workflow.",
+    match = ["kubectl apply -f manifest.yml", "kubectl delete deployment example"],
+)
+
+prefix_rule(
+    pattern = ["helm", ["install", "upgrade", "uninstall", "rollback"]],
+    decision = "prompt",
+    justification = "Release mutation requires explicit environment authority and verified rollback evidence.",
+    match = ["helm upgrade example ./chart", "helm uninstall example"],
+)

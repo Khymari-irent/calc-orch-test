@@ -1,0 +1,53 @@
+schema_version = 1
+updated_at = "1970-01-01T00:00:00Z"
+phase = "bootstrapped"
+
+[repository]
+provider = "github_or_gitlab"
+remote_identity = "owner_or_namespace/repository"
+production_branch = "main"
+integration_branch = "dev"
+expected_production_sha = "replace_me"
+expected_integration_sha = "replace_me"
+
+[delivery]
+current_mvp = "MVP-001"
+current_slice = ""
+slice_status = "not_started"
+next_required_gate = "APPROVE SLICE PLAN MVP-001-S001"
+security_status = "pending"
+security_target_sha = ""
+docs_status = "pending"
+docs_target_sha = ""
+production_paused_for_security = false
+
+[prd_update]
+status = "none"
+target_path = "PRD.md"
+source_prd_digest = ""
+grill_log_digest = ""
+resulting_prd_digest = ""
+proposal_digest = ""
+target_branch = ""
+base_commit = ""
+applied_commit = ""
+verified_at = ""
+
+[context]
+grill_log = ".orchestration/grillme.md"
+handoff_root = ".orchestration/handoffs"
+prd_update_proposal = ".orchestration/prd-update.md"
+
+[ci]
+status = "proposed"
+last_verified_sha = ""
+
+[release]
+pending_release_id = ""
+production_merge_verified = false
+
+[automation]
+# Durable state records only whether local automation must be rechecked. Active
+# preferences live in gitignored .codex/local/automation.toml.
+workspace_state = "manual"
+suspension_reason = ""

@@ -1,0 +1,27 @@
+schema_version = 1
+executable = false
+provider = ""
+native_path = ""
+generated_at = ""
+
+[runtime]
+name = ""
+version = ""
+package_manager = ""
+lockfile = ""
+
+[commands]
+lint = []
+build = []
+test = []
+
+[pipeline]
+stages = ["production_policy_precheck_when_applicable", "lint", "build", "test"]
+triggers = ["pull_or_merge_request_to_integration", "pull_or_merge_request_to_production", "manual"]
+push_trigger = false
+schedule_trigger = false
+deploy = false
+publish = false
+coverage_upload = false
+production_credentials = false
+least_privilege = true

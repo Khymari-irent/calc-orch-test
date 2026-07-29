@@ -1,0 +1,22 @@
+{
+  "name": "handoff",
+  "version": "0.1.0",
+  "description": "Create and validate durable, self-contained orchestration handoff packets.",
+  "author": {
+    "name": "orchestration-agents contributors"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Orchestration Handoff",
+    "shortDescription": "Build validated packets for fresh DevOps agents.",
+    "longDescription": "Persists compact, self-contained handoff packets inside the target repository and validates them before fresh orchestration agents are spawned.",
+    "developerName": "orchestration-agents contributors",
+    "category": "Productivity",
+    "capabilities": [
+      "durable handoff packets",
+      "pre-spawn validation",
+      "bounded assignment monitoring"
+    ],
+    "defaultPrompt": "Create and validate a self-contained orchestration handoff before spawning a fresh agent."
+  }
+}
