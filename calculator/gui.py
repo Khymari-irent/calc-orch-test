@@ -34,8 +34,9 @@ def launch() -> None:
                ("0", 4, 0), (".", 4, 1), ("(", 4, 2), (")", 4, 3)]
     for label, row, column in buttons:
         tk.Button(root, text=label, width=5, command=lambda value=label: append(value)).grid(row=row, column=column, padx=3, pady=3)
-    tk.Button(root, text="Clear", width=11, command=clear).grid(row=5, column=0, columnspan=2, padx=3, pady=3)
-    tk.Button(root, text="=", width=11, command=calculate).grid(row=5, column=2, columnspan=2, padx=3, pady=3)
+    tk.Button(root, text="+", width=11, command=lambda: append("+")).grid(row=5, column=0, columnspan=2, padx=3, pady=3)
+    tk.Button(root, text="Clear", width=5, command=clear).grid(row=5, column=2, padx=3, pady=3)
+    tk.Button(root, text="=", width=5, command=calculate).grid(row=5, column=3, padx=3, pady=3)
     display.focus_set()
     root.bind("<Return>", lambda _event: calculate())
     root.mainloop()
