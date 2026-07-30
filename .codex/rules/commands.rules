@@ -1,0 +1,76 @@
+# Rules are a local defense-in-depth layer. Exact workflow approval remains
+# separate, and provider protections remain authoritative.
+
+prefix_rule(
+    pattern = ["gh", "auth", "status"],
+    decision = "prompt",
+    justification = "An elevated retry of this read-only command may be needed when sandbox execution cannot verify GitHub CLI authentication.",
+    match = ["gh auth status"],
+)
+
+prefix_rule(
+    pattern = ["git", "push"],
+    decision = "prompt",
+    justification = "Publishing or rewriting remote state requires visible approval and workflow evidence.",
+    match = [
+        "git push origin feature/mvp-001-s001-example",
+        "git push --force-with-lease origin feature/mvp-001-s001-example",
+    ],
+)
+
+prefix_rule(
+    pattern = ["git", "push", "--force"],
+    decision = "forbidden",
+    justification = "Unconditional force-push is forbidden; an approved published rebase must use force-with-lease.",
+    match = ["git push --force origin feature/mvp-001-s001-example"],
+    not_match = ["git push --force-with-lease origin feature/mvp-001-s001-example"],
+)
+
+prefix_rule(
+    pattern = ["git", "push", "-f"],
+    decision = "forbidden",
+    justification = "Unconditional force-push is forbidden; an approved published rebase must use force-with-lease.",
+    match = ["git push -f origin feature/mvp-001-s001-example"],
+)
+
+prefix_rule(
+    pattern = ["git", "reset", "--hard"],
+    decision = "prompt",
+    justification = "Hard reset can destroy unrelated user work and requires separate explicit authorization.",
+    match = ["git reset --hard", "git reset --hard HEAD~1"],
+)
+
+prefix_rule(
+    pattern = ["git", "clean"],
+    decision = "prompt",
+    justification = "Git clean can destroy untracked user work and requires separate explicit authorization.",
+    match = ["git clean -fd", "git clean -n"],
+)
+
+prefix_rule(
+    pattern = ["gh", "pr", "merge"],
+    decision = "prompt",
+    justification = "PR merge must match the exact approved feature workflow and may never automate production.",
+    match = ["gh pr merge 42 --merge"],
+)
+
+prefix_rule(
+    pattern = ["glab", "mr", "merge"],
+    decision = "prompt",
+    justification = "MR merge must match the exact approved feature workflow and may never automate production.",
+    match = ["glab mr merge 42 --merge"],
+)
+
+prefix_rule(
+    pattern = ["gh", "release", "create"],
+    decision = "prompt",
+    justification = "Release creation is production-sensitive and is never covered by workspace automation.",
+    match = ["gh release create v1.0.0"],
+)
+
+prefix_rule(
+    pattern = ["glab", "release", "create"],
+    decision = "prompt",
+    justification = "Release creation is production-sensitive and is never covered by workspace automation.",
+    match = ["glab release create v1.0.0"],
+)

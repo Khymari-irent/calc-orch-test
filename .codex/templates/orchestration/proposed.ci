@@ -1,0 +1,38 @@
+schema_version = 1
+status = "proposal"
+executable = false
+provider = "github_or_gitlab"
+native_path = ".github/workflows/ci.yml_or_.gitlab-ci.yml"
+generated_at = "1970-01-01T00:00:00Z"
+validated_against_project = false
+
+[runtime]
+name = "replace_me"
+version = "replace_me"
+package_manager = "replace_me"
+lockfile = "replace_me"
+
+[commands]
+setup = "replace_me"
+production_policy_precheck = "replace_me"
+lint = "replace_me"
+build = "replace_me"
+test = "replace_me"
+
+[pipeline]
+order = ["production_policy_precheck_when_main", "lint", "build", "test"]
+fail_fast = true
+pull_or_merge_request_targets = ["dev", "main"]
+manual_dispatch = true
+push_trigger = false
+schedule_trigger = false
+deploy = false
+publish = false
+coverage_upload = false
+production_credentials = false
+least_privilege = true
+
+[promotion]
+first_buildable_slice = true
+remove_proposal_in_same_commit = true
+material_change_requires = "APPROVE CI PIPELINE"

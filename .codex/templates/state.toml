@@ -1,0 +1,32 @@
+schema_version = 1
+updated_at = ""
+phase = "bootstrap_pending"
+active_mvp = ""
+active_slice = ""
+expected_integration_sha = ""
+expected_cycle_sha = ""
+pending_proposal_digest = ""
+security_status = "pending"
+security_target_sha = ""
+docs_status = "pending"
+docs_target_sha = ""
+production_paused_for_security = false
+
+[prd_update]
+status = "none"
+target_path = "PRD.md"
+source_prd_digest = ""
+grill_log_digest = ""
+resulting_prd_digest = ""
+proposal_digest = ""
+target_branch = ""
+base_commit = ""
+applied_commit = ""
+verified_at = ""
+
+[provider_evidence]
+mvp_issue = ""
+slice_issue = ""
+feature_change = ""
+release_change = ""
+security_issues = []

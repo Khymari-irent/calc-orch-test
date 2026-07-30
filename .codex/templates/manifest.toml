@@ -1,0 +1,35 @@
+schema_version = 1
+policy_version = 1
+created_at = ""
+
+[repository]
+name = ""
+provider = ""
+remote_identity = ""
+visibility = ""
+license = ""
+
+[branches]
+production = ""
+integration = ""
+default = ""
+
+[product]
+prd_path = ""
+prd_version = ""
+prd_digest = ""
+delivery_plan_version = ""
+delivery_plan_digest = ""
+
+[policy]
+command_registry = ".codex/policies/commands.toml"
+workflow_policy = ".codex/policies/workflow.toml"
+
+[context]
+grill_log = ".orchestration/grillme.md"
+handoff_root = ".orchestration/handoffs"
+handoff_skill = ".codex/plugins/handoff/skills/handoff/SKILL.md"
+handoff_validator = ".codex/plugins/handoff/skills/handoff/scripts/handoff_packet.py"
+assignment_monitor = ".codex/plugins/handoff/skills/handoff/scripts/assignment_monitor.py"
+prd_update_proposal = ".orchestration/prd-update.md"
+single_slice_per_agent_thread = true

@@ -1,0 +1,6 @@
+interface:
+  display_name: "Orchestration Handoff"
+  short_description: "Create validated packets for fresh agents"
+  default_prompt: "Create, persist, and validate a self-contained single-slice handoff packet before spawning a fresh DevOps agent."
+policy:
+  allow_implicit_invocation: false

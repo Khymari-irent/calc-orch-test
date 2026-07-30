@@ -1,0 +1,43 @@
+schema_version = 1
+orchestration_version = "replace_me"
+created_at = "1970-01-01T00:00:00Z"
+
+[repository]
+name = "replace_me"
+mode = "new_or_existing"
+provider = "github_or_gitlab"
+remote_identity = "owner_or_namespace/repository"
+visibility = "private"
+
+[branches]
+production = "main"
+integration = "dev"
+default = "dev"
+feature_pattern = "feature/mvp-NNN-sNNN-slug"
+
+[product]
+prd_path = "PRD.md"
+prd_version = "replace_me"
+delivery_plan_path = ""
+delivery_plan_version = ""
+mvp_mode = "explicit_or_implicit_single"
+
+[policy]
+command_registry = ".codex/policies/commands.toml"
+workflow_policy = ".codex/policies/workflow.toml"
+review_cycles = 5
+additional_substantive_cycles_unbounded = true
+
+[context]
+grill_log = ".orchestration/grillme.md"
+handoff_root = ".orchestration/handoffs"
+handoff_skill = ".codex/plugins/handoff/skills/handoff/SKILL.md"
+handoff_validator = ".codex/plugins/handoff/skills/handoff/scripts/handoff_packet.py"
+assignment_monitor = ".codex/plugins/handoff/skills/handoff/scripts/assignment_monitor.py"
+prd_update_proposal = ".orchestration/prd-update.md"
+single_slice_per_agent_thread = true
+
+[ci]
+status = "proposed"
+proposal_path = ".orchestration/proposed.ci"
+native_path = ""

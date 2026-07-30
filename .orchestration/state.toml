@@ -1,0 +1,51 @@
+schema_version = 1
+updated_at = "2026-07-29T18:44:58.9315540Z"
+phase = "bootstrapped"
+
+[repository]
+provider = "github"
+remote_identity = "Khymari-irent/calc-orch-test"
+production_branch = "main"
+integration_branch = "dev"
+expected_production_sha = "253b2828ee9bd6c09a7d4c951e7de49d8b3bcb7c"
+expected_integration_sha = ""
+
+[delivery]
+current_mvp = ""
+current_slice = ""
+slice_status = "not_started"
+next_required_gate = "PRD vertical-slice clarification"
+security_status = "pending"
+security_target_sha = ""
+docs_status = "pending"
+docs_target_sha = ""
+production_paused_for_security = false
+
+[prd_update]
+status = "none"
+target_path = "PRD.md"
+source_prd_digest = "d7ac97dcbc993d53b850877188e4b6c88ee058bae7ea7725bc04f2bac9b12a33"
+grill_log_digest = ""
+resulting_prd_digest = ""
+proposal_digest = ""
+target_branch = ""
+base_commit = ""
+applied_commit = ""
+verified_at = ""
+
+[context]
+grill_log = ".orchestration/grillme.md"
+handoff_root = ".orchestration/handoffs"
+prd_update_proposal = ".orchestration/prd-update.md"
+
+[ci]
+status = "proposed"
+last_verified_sha = ""
+
+[release]
+pending_release_id = ""
+production_merge_verified = false
+
+[automation]
+workspace_state = "manual"
+suspension_reason = ""

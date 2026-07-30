@@ -1,0 +1,70 @@
+#!/bin/sh
+# Block ordinary commits directly on production and integration branches.
+
+set -u
+
+hook_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+# shellcheck source=lib.sh
+. "$hook_dir/lib.sh"
+
+branch=$(guard_branch || true)
+guard_is_protected_branch "$branch" || exit 0
+
+receipt=$(guard_receipt_path protected-commit) || {
+  guard_error "cannot locate the protected-commit receipt path"
+  exit 1
+}
+
+if ! guard_receipt_header_is_valid "$receipt"; then
+  guard_error "commits on '$branch' are blocked; use a feature branch and the PR/MR workflow"
+  guard_error "only a bound APPROVE REPOSITORY BOOTSTRAP receipt can authorize initial repository construction"
+  exit 1
+fi
+
+guard_receipt_has "$receipt" branch "$branch" || {
+  guard_error "bootstrap receipt is bound to a different branch"
+  exit 1
+}
+
+head=$(git rev-parse --verify HEAD 2>/dev/null || printf '%s' UNBORN)
+tree=$(git write-tree 2>/dev/null) || {
+  guard_error "cannot calculate the staged tree"
+  exit 1
+}
+
+guard_receipt_has "$receipt" baseline "$head" || {
+  guard_error "bootstrap receipt is stale for the current baseline"
+  exit 1
+}
+guard_receipt_has "$receipt" expected_tree "$tree" || {
+  guard_error "bootstrap receipt does not match the staged tree"
+  exit 1
+}
+
+case "$branch" in
+  main)
+    empty_tree=$(guard_empty_tree) || exit 1
+    if [ "$head" != UNBORN ] || [ "$tree" != "$empty_tree" ]; then
+      guard_error "main bootstrap is limited to the fileless parentless anchor commit"
+      exit 1
+    fi
+    ;;
+  dev)
+    if [ "$head" = UNBORN ] || ! guard_is_parentless_empty_commit "$head"; then
+      guard_error "dev bootstrap must start from the fileless parentless main anchor"
+      exit 1
+    fi
+    empty_tree=$(guard_empty_tree) || exit 1
+    if [ "$tree" = "$empty_tree" ]; then
+      guard_error "dev bootstrap must contain the approved bootstrap tree"
+      exit 1
+    fi
+    ;;
+  *)
+    guard_error "bootstrap receipts cannot authorize commits on '$branch'"
+    exit 1
+    ;;
+esac
+
+guard_error "allowing the bound one-time repository-bootstrap commit on '$branch'; provider protection is still required"
+exit 0

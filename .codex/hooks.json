@@ -1,0 +1,19 @@
+{
+  "description": "Advisory startup checks for the portable DevOps orchestration bundle. Git hooks and provider branch protection provide separate enforcement layers.",
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume|clear|compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$(git rev-parse --show-toplevel)/.codex/hooks/session_guard.sh\"",
+            "commandWindows": "powershell -NoProfile -ExecutionPolicy Bypass -Command \"& (Join-Path (git rev-parse --show-toplevel) '.codex/hooks/session_guard.ps1')\"",
+            "timeout": 15,
+            "statusMessage": "Checking orchestration guardrails"
+          }
+        ]
+      }
+    ]
+  }
+}

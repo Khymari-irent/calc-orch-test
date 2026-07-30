@@ -1,0 +1,11 @@
+schema_version = 1
+
+[[event]]
+timestamp = "2026-07-29T18:44:58.9315540Z"
+type = "repository_bootstrap_approved"
+proposal_id = "RB-20260729-001"
+proposal_digest = "cc018b3331cca372a544e45b83ab65fdde7286ced531093464c134cd8dff7753"
+approval = "APPROVE REPOSITORY BOOTSTRAP"
+provider = "github"
+remote_identity = "Khymari-irent/calc-orch-test"
+baseline = "UNBORN"

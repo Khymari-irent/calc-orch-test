@@ -1,0 +1,16 @@
+schema_version = 1
+policy_version = 1
+workspace_fingerprint = ""
+provider = ""
+remote_fingerprint = ""
+integration_branch = ""
+prd_structure_digest = ""
+approval_policy_digest = ""
+orchestrator_version = ""
+pending_type = ""
+pending_proposal_digest = ""
+
+[automation]
+slice_plan = "disabled"
+slice = "disabled"
+feature_merge = "disabled"

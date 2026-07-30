@@ -1,0 +1,45 @@
+schema_version = 1
+orchestration_version = "2"
+created_at = "2026-07-29T18:44:58.9315540Z"
+
+[repository]
+name = "calc-orch-test"
+mode = "new"
+provider = "github"
+remote_identity = "Khymari-irent/calc-orch-test"
+visibility = "private"
+license = "MIT"
+
+[branches]
+production = "main"
+integration = "dev"
+default = "dev"
+feature_pattern = "feature/mvp-NNN-sNNN-slug"
+
+[product]
+prd_path = "PRD.md"
+prd_version = "unversioned"
+prd_digest = "d7ac97dcbc993d53b850877188e4b6c88ee058bae7ea7725bc04f2bac9b12a33"
+delivery_plan_path = ""
+delivery_plan_version = ""
+mvp_mode = "explicit_two_mvp_releases_pending_vertical_slice_normalization"
+
+[policy]
+command_registry = ".codex/policies/commands.toml"
+workflow_policy = ".codex/policies/workflow.toml"
+review_cycles = 5
+additional_substantive_cycles_unbounded = true
+
+[context]
+grill_log = ".orchestration/grillme.md"
+handoff_root = ".orchestration/handoffs"
+handoff_skill = ".codex/plugins/handoff/skills/handoff/SKILL.md"
+handoff_validator = ".codex/plugins/handoff/skills/handoff/scripts/handoff_packet.py"
+assignment_monitor = ".codex/plugins/handoff/skills/handoff/scripts/assignment_monitor.py"
+prd_update_proposal = ".orchestration/prd-update.md"
+single_slice_per_agent_thread = true
+
+[ci]
+status = "proposed"
+proposal_path = ".orchestration/proposed.ci"
+native_path = ".github/workflows/ci.yml"

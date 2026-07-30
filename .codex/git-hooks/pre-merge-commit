@@ -1,0 +1,17 @@
+#!/bin/sh
+# Git merge commits do not consistently invoke pre-commit. Keep a dedicated
+# guard so protected-branch merges happen through the provider PR/MR workflow.
+
+set -u
+
+hook_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+# shellcheck source=lib.sh
+. "$hook_dir/lib.sh"
+
+branch=$(guard_branch || true)
+if guard_is_protected_branch "$branch"; then
+  guard_error "local merge commits on '$branch' are blocked; merge through the protected provider PR/MR workflow"
+  exit 1
+fi
+
+exit 0

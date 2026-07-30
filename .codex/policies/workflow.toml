@@ -1,0 +1,330 @@
+schema_version = 2
+policy_name = "portable-devops-orchestration"
+initial_review_cycles = 5
+additional_cycles_unbounded = true
+one_active_slice = true
+parallel_reviewer_and_tester = true
+fresh_reviewer_each_cycle = true
+fresh_tester_each_cycle = true
+reuse_developer_within_slice = true
+fresh_prd_thread_per_question = true
+fresh_security_each_assessment = true
+fresh_docs_each_pass = true
+single_slice_per_agent_thread = true
+
+[authority]
+precedence = [
+  "platform_security_managed_policy",
+  "latest_explicit_approved_user_decision",
+  "current_versioned_prd",
+  "approved_delivery_plan",
+  "approved_slice_baseline",
+  "repository_instructions_and_conventions",
+  "existing_implementation_and_inference",
+]
+pause_on_unresolved_conflict = true
+
+[roles.devops_orchestrator]
+user_facing = true
+owns_state_transitions = true
+may_edit_tracked_files = false
+may_persist_generated_handoffs = true
+
+[roles.devops_prd]
+user_facing = true
+may_edit_tracked_files = false
+may_append_grill_log = true
+may_edit_prd = false
+fresh_thread_per_question = true
+
+[roles.devops_developer]
+may_edit_tracked_files = true
+may_apply_approved_prd_update = true
+may_synthesize_prd_update = false
+may_commit = true
+may_push = false
+may_merge = false
+may_deploy = false
+
+[roles.devops_reviewer]
+may_edit_tracked_files = false
+may_run_artifact_producing_commands = false
+may_commit = false
+may_push = false
+may_merge = false
+may_deploy = false
+
+[roles.devops_tester]
+may_edit_tracked_files = false
+may_run_artifact_producing_commands = true
+requires_disposable_worktree = true
+may_commit = false
+may_push = false
+may_merge = false
+may_deploy = false
+
+[roles.devops_security]
+may_edit_tracked_files = false
+may_run_artifact_producing_commands = true
+requires_disposable_worktree_for_artifacts = true
+may_create_provider_issue = false
+may_commit = false
+may_push = false
+may_merge = false
+may_deploy = false
+
+[roles.devops_docs]
+may_edit_tracked_files = true
+source_owned_documentation_only = true
+runs_after_security = true
+runs_once_before_slice_change_request = true
+may_commit = true
+may_push = false
+may_merge = false
+may_deploy = false
+
+[branches]
+new_repo_production = "main"
+new_repo_integration = "dev"
+new_repo_default = "dev"
+production_anchor_must_be_fileless = true
+production_anchor_must_have_no_parent = true
+bootstrap_genesis_is_only_direct_push_exception = true
+feature_pattern = "feature/mvp-NNN-sNNN-slug"
+feature_base = "integration"
+feature_target = "integration"
+feature_merge_strategy = "no_ff"
+release_source = "integration"
+release_target = "production"
+release_merge_must_be_human = true
+direct_protected_branch_push = false
+force_push_protected_branch = false
+delete_protected_branch = false
+private_feature_rebase_required = true
+published_rebase_requires_manual_approval = true
+
+[providers]
+first_class = ["github", "gitlab"]
+fallback = ["local", "azure_devops", "bitbucket", "other"]
+ask_when_github_vs_gitlab_is_ambiguous = true
+pause_if_mandatory_protection_unavailable = true
+github_auth_probe = "gh auth status"
+github_auth_probe_initial_execution = "sandboxed"
+retry_github_auth_probe_elevated_on_sandbox_failure = true
+elevated_auth_probe_requires_platform_approval = true
+elevated_auth_probe_read_only = true
+elevated_auth_probe_may_change_credentials = false
+auth_probe_failure_status = "unverified"
+
+[plugins]
+bundled_root = ".codex/plugins"
+scan_bundled_root = true
+manifest_relative_path = ".codex-plugin/plugin.json"
+declared_skills_only = true
+reject_paths_outside_bundled_root = true
+prefer_formally_installed_skill = true
+fallback_read_bundled_skill_directly = true
+claim_installed_from_directory_presence = false
+pass_canonical_skill_path_to_agents = true
+required_skill_missing_only_after_host_and_bundle_scan = true
+
+[tracking]
+one_mvp_issue = true
+one_slice_issue = true
+separate_bug_issues = true
+separate_tech_debt_issues = true
+close_slice_after_verified_integration_merge = true
+close_mvp_after_verified_production_merge = true
+record_wall_clock_not_active_labor = true
+
+[severity.P0]
+label = "Critical"
+blocks_integration = true
+disregard_allowed = false
+
+[severity.P1]
+label = "High"
+blocks_integration = true
+disregard_allowed = false
+
+[severity.P2]
+label = "Medium"
+blocks_integration = true
+disregard_allowed = true
+two_step_confirmation = true
+creates_tech_debt_issue = true
+
+[severity.P3]
+label = "Low/Nitpick"
+blocks_integration = false
+disposition_command_required = false
+always_report = true
+
+[security]
+runs_after_review_and_test_cycles = true
+fresh_thread_each_assessment = true
+finding_id_pattern = "MVP-NNN-SNNN-SEC-NNN"
+create_provider_issue_for_each_finding = true
+blocking_severities = ["P0", "P1", "P2"]
+p0_p1_ignore_allowed = false
+p2_ignore_requires_two_step_confirmation = true
+p3_blocks = false
+fix_requires_fresh_review_test_and_security = true
+blocks_slice_publication = true
+blocks_integration = true
+blocks_release = true
+blocks_deployment = true
+
+[documentation]
+runs_after_security = true
+runs_once_before_slice_change_request = true
+source_owned_only = true
+documents_all_functions_methods_and_constants = true
+exclude_generated_vendor_dependencies = true
+behavior_change_invalidates_security = true
+
+[prd_updates]
+proposal_owner = "devops_orchestrator"
+application_owner = "devops_developer"
+source_inputs = ["current_prd", "completed_grill_log_entries"]
+requires_exact_diff = true
+requires_source_prd_digest = true
+requires_grill_log_digest = true
+requires_resulting_prd_digest = true
+requires_proposal_digest = true
+requires_explicit_approval = true
+requires_non_protected_branch = true
+developer_may_synthesize = false
+verify_exact_diff_after_apply = true
+verify_grill_log_unchanged = true
+planning_waits_for_verified_update = true
+
+[context]
+grill_log = ".orchestration/grillme.md"
+handoff_root = ".orchestration/handoffs"
+handoff_pattern = "mvpNNN/sliceNNN/<agent>/handoffNNN.md"
+single_slice_per_agent_thread = true
+full_chat_transcripts_forbidden = true
+stable_prompt_prefixes = true
+fixed_cache_discount_claim_forbidden = true
+
+[handoffs]
+bundled_skill = ".codex/plugins/handoff/skills/handoff/SKILL.md"
+validator = ".codex/plugins/handoff/skills/handoff/scripts/handoff_packet.py"
+required_roles = [
+  "devops_prd",
+  "devops_developer",
+  "devops_reviewer",
+  "devops_tester",
+  "devops_security",
+  "devops_docs",
+]
+generate_before_spawn = true
+persist_before_spawn = true
+validate_before_spawn = true
+spawn_only_after_validation = true
+attach_skill_as_skill_input = true
+attach_document_content_and_path = true
+parent_context_fork = false
+one_concrete_validation_error = true
+personal_skill_dependency_allowed = false
+required_schema_fields = [
+  "workflow_role_and_exact_objective",
+  "mvp_slice_cycle_and_finding_identifiers",
+  "proposal_id_and_digest",
+  "literal_approval_when_required",
+  "exact_authorized_effect",
+  "complete_patch_full_file_or_durable_artifact",
+  "allowed_forbidden_and_byte_identical_paths",
+  "branch_base_and_candidate_or_target_sha",
+  "source_expected_result_and_grill_log_digests",
+  "dirty_worktree_inventory_and_ownership",
+  "verification_commands",
+  "required_skill_paths",
+  "completion_criteria",
+  "stop_conditions",
+  "compact_prior_agent_evidence_references",
+]
+
+[assignment_monitor]
+script = ".codex/plugins/handoff/skills/handoff/scripts/assignment_monitor.py"
+one_active_developer_per_slice = true
+heartbeat_seconds = 60
+silent_timeout_seconds = 180
+safe_interrupt_on_timeout = true
+capture_last_completed_action = true
+capture_exact_error = true
+max_automatic_retries = 1
+regenerate_handoff_before_retry = true
+revalidate_handoff_before_retry = true
+overlapping_retries_allowed = false
+running_is_terminal = false
+monitor_until_terminal = true
+stop_after_two_failures = true
+
+[automation]
+default = "manual"
+allowed = ["SLICE PLAN", "SLICE", "FEATURE MERGE"]
+workspace_local_only = true
+committed = false
+one_pending_proposal = true
+confirmation = "CONFIRM AUTOMATION"
+material_changes_suspend = [
+  "provider",
+  "remote",
+  "integration_branch",
+  "prd_or_mvp_structure",
+  "approval_policy",
+  "orchestration_agent_version",
+]
+never_allowed = [
+  "repository_bootstrap",
+  "readme_overwrite",
+  "risk_acceptance",
+  "security_risk_disposition",
+  "public_visibility",
+  "published_rebase",
+  "shared_test_environment",
+  "production_branch",
+  "mvp_release",
+  "hotfix_release",
+  "deployment",
+  "destructive_action",
+  "secret_or_credential",
+  "permission_change",
+]
+
+[ci]
+github_path = ".github/workflows/ci.yml"
+gitlab_path = ".gitlab-ci.yml"
+proposal_path = ".orchestration/proposed.ci"
+proposal_format = "toml"
+stages = ["production_policy_precheck_when_applicable", "lint", "build", "test"]
+fail_fast = true
+triggers = ["pull_or_merge_request_to_integration", "pull_or_merge_request_to_production", "manual"]
+push_trigger = false
+schedule_trigger = false
+deploy = false
+publish = false
+coverage_upload = false
+production_credentials = false
+least_privilege = true
+promote_on_first_buildable_slice = true
+
+[production]
+main_merge_automatable = false
+release_pr_creation_requires_manual_approval = true
+hotfix_pr_creation_requires_manual_approval = true
+merge_never_implies_deploy = true
+deployment_requires_two_step_manual_approval = true
+deployment_approval_reusable = false
+
+[state]
+portable_runtime = ".codex"
+committed_history = ".orchestration"
+local_private_state = ".codex/local"
+machine_format = "toml"
+human_format = "markdown"
+append_only_audit = true
+commit_raw_logs = false
+commit_secrets = false
