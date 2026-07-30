@@ -1,7 +1,9 @@
 """UI-independent arithmetic operations for the calculator."""
 
 import re
-from decimal import Decimal, DecimalException, InvalidOperation, localcontext
+from decimal import Decimal
+from decimal import DecimalException, InvalidOperation, localcontext
+from .scientific import apply as apply_scientific
 from typing import TypeAlias
 
 
@@ -82,6 +84,7 @@ def _parse_number(value: NumberInput) -> Decimal:
 def evaluate(expression: str) -> Decimal:
     """Evaluate a basic arithmetic expression with precedence and parentheses."""
 
+    expression = re.sub(r"(?i)([a-z0-9]+)\(([-+*/().\d\s]+)\)", lambda match: str(apply_scientific(match.group(1).lower(), float(evaluate(match.group(2))))), expression)
     expression = re.sub(r"(?<!\d)\.(?=\d)", "0.", expression)
     tokens = re.findall(r"\d+(?:\.\d+)?|[()+\-*/]", expression.replace(" ", ""))
     compact = expression.replace(" ", "")
