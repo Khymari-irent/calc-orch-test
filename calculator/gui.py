@@ -24,21 +24,25 @@ def launch() -> None:
     def clear() -> None:
         expression.set("")
 
+    def backspace() -> None:
+        expression.set(expression.get()[:-1])
+
     def calculate() -> None:
         try:
             expression.set(str(evaluate(expression.get())))
         except CalculatorError as error:
             messagebox.showerror("Calculator error", str(error), parent=root)
 
-    buttons = [("7", 1, 0), ("8", 1, 1), ("9", 1, 2), ("/", 1, 3),
-               ("4", 2, 0), ("5", 2, 1), ("6", 2, 2), ("*", 2, 3),
-               ("1", 3, 0), ("2", 3, 1), ("3", 3, 2), ("-", 3, 3),
-               ("0", 4, 0), (".", 4, 1), ("(", 4, 2), (")", 4, 3)]
+    buttons = [(".", 1, 0), ("Clear", 1, 1), ("<", 1, 2), ("/", 1, 3),
+               ("7", 2, 0), ("8", 2, 1), ("9", 2, 2), ("*", 2, 3),
+               ("4", 3, 0), ("5", 3, 1), ("6", 3, 2), ("-", 3, 3),
+               ("1", 4, 0), ("2", 4, 1), ("3", 4, 2), ("+", 4, 3),
+               ("0", 5, 0), ("(", 5, 1), (")", 5, 2), ("=", 5, 3)]
     for label, row, column in buttons:
-        tk.Button(root, text=label, font=("Segoe UI", 14), bg="#3c4043", fg="#f8f9fa", activebackground="#5f6368", activeforeground="#ffffff", relief="flat", width=5, command=lambda value=label: append(value)).grid(row=row, column=column, sticky="nsew", padx=4, pady=4, ipady=7)
-    tk.Button(root, text="+", font=("Segoe UI", 14), bg="#8ab4f8", fg="#202124", activebackground="#aecbfa", relief="flat", width=11, command=lambda: append("+")).grid(row=5, column=0, columnspan=2, sticky="nsew", padx=4, pady=4, ipady=7)
-    tk.Button(root, text="Clear", font=("Segoe UI", 12), bg="#5f6368", fg="#ffffff", activebackground="#80868b", relief="flat", width=5, command=clear).grid(row=5, column=2, sticky="nsew", padx=4, pady=4, ipady=7)
-    tk.Button(root, text="=", font=("Segoe UI", 14, "bold"), bg="#8ab4f8", fg="#202124", activebackground="#aecbfa", relief="flat", width=5, command=calculate).grid(row=5, column=3, sticky="nsew", padx=4, pady=4, ipady=7)
+        command = {"Clear": clear, "<": backspace, "=": calculate}.get(label, lambda value=label: append(value))
+        background = "#8ab4f8" if label == "=" else "#5f6368" if label == "Clear" else "#3c4043"
+        foreground = "#202124" if label == "=" else "#ffffff"
+        tk.Button(root, text=label, font=("Segoe UI", 14), bg=background, fg=foreground, activebackground="#aecbfa", activeforeground="#202124", relief="flat", width=5, command=command).grid(row=row, column=column, sticky="nsew", padx=4, pady=4, ipady=7)
     for column in range(4):
         root.grid_columnconfigure(column, weight=1)
     for row in range(1, 6):
