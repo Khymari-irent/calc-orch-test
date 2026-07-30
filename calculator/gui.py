@@ -20,20 +20,7 @@ def launch() -> None:
     history_frame = tk.Frame(root, bg="#202124")
     history = tk.Listbox(history_frame, height=4, bg="#202124", fg="#bdc1c6", highlightthickness=0, relief="flat", activestyle="none")
     history_entries: list[str] = []
-    more_button = tk.Button(history_frame, text="...", bg="#5f6368", fg="#ffffff", activebackground="#80868b", relief="flat")
     history.pack(side="left", fill="both", expand=True)
-
-    def show_history() -> None:
-        window = tk.Toplevel(root)
-        window.title("Calculation history")
-        window.configure(bg="#202124")
-        full_history = tk.Listbox(window, height=12, width=36, bg="#202124", fg="#f8f9fa", relief="flat")
-        full_history.pack(padx=12, pady=12, fill="both", expand=True)
-        for entry in history_entries:
-            full_history.insert(tk.END, entry)
-        window.transient(root)
-
-    more_button.configure(command=show_history)
 
     def append(value: str) -> None:
         expression.set(expression.get() + value)
@@ -51,12 +38,11 @@ def launch() -> None:
             expression.set(str(result))
             history_entries.append(f"{original} = {result}")
             history.delete(0, tk.END)
-            for entry in history_entries[-4:]:
+            visible_entries = history_entries[-4:] if len(history_entries) <= 4 else history_entries[-3:] + ["... scroll to see more"]
+            for entry in visible_entries:
                 history.insert(tk.END, entry)
             if history_frame.winfo_manager() == "":
                 history_frame.grid(row=1, column=0, columnspan=4, sticky="nsew", padx=4, pady=(0, 10))
-            if len(history_entries) > 4 and more_button.winfo_manager() == "":
-                more_button.pack(side="right", fill="y", padx=(6, 0))
         except CalculatorError as error:
             messagebox.showerror("Calculator error", str(error), parent=root)
 
