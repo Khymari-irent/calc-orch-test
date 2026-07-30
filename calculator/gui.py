@@ -20,9 +20,13 @@ def launch() -> None:
     display.grid(row=0, column=0, columnspan=4, sticky="nsew", padx=4, pady=(4, 8), ipady=8)
     tk.Checkbutton(root, text="Degrees", variable=angle_mode, onvalue="degrees", offvalue="radians", bg="#202124", fg="#f8f9fa", selectcolor="#303134", activebackground="#202124", activeforeground="#ffffff").grid(row=1, column=0, columnspan=4, sticky="w", padx=4, pady=(0, 8))
     scientific_frame = tk.Frame(root, bg="#202124")
-    scientific_buttons = [("sin", "sin("), ("cos", "cos("), ("tan", "tan("), ("√", "sqrt("), ("sin⁻¹", "asin("), ("cos⁻¹", "acos("), ("tan⁻¹", "atan("), ("1/x", "reciprocal("), ("x²", "square("), ("1/√x", "invsqrt("), ("log", "log("), ("ln", "ln("), ("abs", "abs(")]
-    for index, (label, value) in enumerate(scientific_buttons):
-        tk.Button(scientific_frame, text=label, font=("Segoe UI", 10), bg="#5f6368", fg="#ffffff", activebackground="#80868b", relief="flat", command=lambda item=value: append(item)).grid(row=index // 4, column=index % 4, sticky="nsew", padx=3, pady=3, ipady=4)
+    scientific_buttons = [("sin", "sin(", "asin", "asin("), ("cos", "cos(", "acos", "acos("), ("tan", "tan(", "atan", "atan("), ("√", "sqrt(", "1/√x", "invsqrt("), ("x²", "square(", "1/x", "reciprocal("), ("log", "log(", "exp", "exp("), ("ln", "ln(", "eˣ", "exp("), ("abs", "abs(", "abs", "abs(")]
+    scientific_widgets = []
+    for index, (label, value, inverse_label, inverse_value) in enumerate(scientific_buttons):
+        button = tk.Button(scientific_frame, text=label, font=("Segoe UI", 10), bg="#5f6368", fg="#ffffff", activebackground="#80868b", relief="flat", command=lambda item=value: append(item))
+        button.grid(row=index // 4, column=index % 4, sticky="nsew", padx=3, pady=3, ipady=4)
+        scientific_widgets.append((button, (label, value), (inverse_label, inverse_value)))
+    scientific_frame.grid(row=8, column=0, columnspan=4, sticky="nsew", padx=4, pady=4)
     history_frame = tk.Frame(root, bg="#202124")
     history = tk.Listbox(history_frame, height=4, bg="#202124", fg="#bdc1c6", highlightthickness=0, relief="flat", activestyle="none")
     scrollbar = tk.Scrollbar(history_frame, orient="vertical", command=history.yview)
@@ -74,6 +78,14 @@ def launch() -> None:
     display.focus_set()
     root.bind("<Return>", lambda _event: calculate())
     root.bind("<Escape>", lambda _event: clear())
-    root.bind("<KeyPress-Shift_L>", lambda _event: scientific_frame.grid(row=8, column=0, columnspan=4, sticky="nsew", padx=4, pady=4))
-    root.bind("<KeyRelease-Shift_L>", lambda _event: scientific_frame.grid_remove())
+    def show_inverse_functions(_event: tk.Event) -> None:
+        for button, _direct, inverse in scientific_widgets:
+            button.configure(text=inverse[0], command=lambda item=inverse[1]: append(item))
+
+    def show_direct_functions(_event: tk.Event) -> None:
+        for button, direct, _inverse in scientific_widgets:
+            button.configure(text=direct[0], command=lambda item=direct[1]: append(item))
+
+    root.bind("<KeyPress-Shift_L>", show_inverse_functions)
+    root.bind("<KeyRelease-Shift_L>", show_direct_functions)
     root.mainloop()

@@ -30,6 +30,8 @@ def apply(name: str, value: float, angle_mode: str = "radians") -> float:
         return math.log10(value)
     if name == "ln":
         return math.log(value)
+    if name == "exp":
+        return math.exp(value)
     if name == "abs":
         return abs(value)
     raise ValueError(f"Unsupported scientific function: {name}")
