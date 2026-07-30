@@ -81,10 +81,10 @@ def _parse_number(value: NumberInput) -> Decimal:
     return number
 
 
-def evaluate(expression: str) -> Decimal:
+def evaluate(expression: str, angle_mode: str = "radians") -> Decimal:
     """Evaluate a basic arithmetic expression with precedence and parentheses."""
 
-    expression = re.sub(r"(?i)([a-z0-9]+)\(([-+*/().\d\s]+)\)", lambda match: str(apply_scientific(match.group(1).lower(), float(evaluate(match.group(2))))), expression)
+    expression = re.sub(r"(?i)([a-z0-9]+)\(([-+*/().\d\s]+)\)", lambda match: str(apply_scientific(match.group(1).lower(), float(evaluate(match.group(2), angle_mode)), angle_mode)), expression)
     expression = re.sub(r"(?<!\d)\.(?=\d)", "0.", expression)
     tokens = re.findall(r"\d+(?:\.\d+)?|[()+\-*/]", expression.replace(" ", ""))
     compact = expression.replace(" ", "")
