@@ -59,11 +59,11 @@ def interactive() -> int:
             return 0
         if not expression:
             continue
-        if re.search(r"\bAns\b", expression):
+        if re.search(r"\bAns\b", expression, flags=re.IGNORECASE):
             if previous is None:
                 print("Error: Ans is not available until a calculation succeeds.")
                 continue
-            expression = re.sub(r"\bAns\b", str(previous), expression)
+            expression = re.sub(r"\bAns\b", str(previous), expression, flags=re.IGNORECASE)
         try:
             previous = evaluate(expression)
         except CalculatorError as error:

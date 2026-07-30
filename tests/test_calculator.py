@@ -112,6 +112,21 @@ def test_interactive_mode_supports_ans_and_quit() -> None:
     assert "24" in result.stdout
 
 
+def test_interactive_mode_accepts_case_insensitive_ans() -> None:
+    result = subprocess.run(
+        [sys.executable, "-m", "calculator"],
+        cwd=PROJECT_ROOT,
+        input="2 + 3\naNs + 4\nquit\n",
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+
+    assert result.returncode == 0
+    assert "5" in result.stdout
+    assert "9" in result.stdout
+
+
 def test_interactive_mode_keeps_running_after_errors() -> None:
     result = subprocess.run(
         [sys.executable, "-m", "calculator"],
