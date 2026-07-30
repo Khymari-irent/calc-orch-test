@@ -11,10 +11,12 @@ def launch() -> None:
 
     root = tk.Tk()
     root.title("Calculator")
-    root.resizable(False, False)
+    root.configure(bg="#202124", padx=12, pady=12)
+    root.resizable(True, True)
+    root.minsize(320, 420)
     expression = tk.StringVar()
-    display = tk.Entry(root, textvariable=expression, justify="right", font=("Segoe UI", 18), width=16)
-    display.grid(row=0, column=0, columnspan=4, padx=8, pady=8)
+    display = tk.Entry(root, textvariable=expression, justify="right", font=("Segoe UI", 22), bg="#303134", fg="#f8f9fa", insertbackground="#f8f9fa", relief="flat", width=16)
+    display.grid(row=0, column=0, columnspan=4, sticky="nsew", padx=4, pady=(4, 14), ipady=8)
 
     def append(value: str) -> None:
         expression.set(expression.get() + value)
@@ -33,10 +35,15 @@ def launch() -> None:
                ("1", 3, 0), ("2", 3, 1), ("3", 3, 2), ("-", 3, 3),
                ("0", 4, 0), (".", 4, 1), ("(", 4, 2), (")", 4, 3)]
     for label, row, column in buttons:
-        tk.Button(root, text=label, width=5, command=lambda value=label: append(value)).grid(row=row, column=column, padx=3, pady=3)
-    tk.Button(root, text="+", width=11, command=lambda: append("+")).grid(row=5, column=0, columnspan=2, padx=3, pady=3)
-    tk.Button(root, text="Clear", width=5, command=clear).grid(row=5, column=2, padx=3, pady=3)
-    tk.Button(root, text="=", width=5, command=calculate).grid(row=5, column=3, padx=3, pady=3)
+        tk.Button(root, text=label, font=("Segoe UI", 14), bg="#3c4043", fg="#f8f9fa", activebackground="#5f6368", activeforeground="#ffffff", relief="flat", width=5, command=lambda value=label: append(value)).grid(row=row, column=column, sticky="nsew", padx=4, pady=4, ipady=7)
+    tk.Button(root, text="+", font=("Segoe UI", 14), bg="#8ab4f8", fg="#202124", activebackground="#aecbfa", relief="flat", width=11, command=lambda: append("+")).grid(row=5, column=0, columnspan=2, sticky="nsew", padx=4, pady=4, ipady=7)
+    tk.Button(root, text="Clear", font=("Segoe UI", 12), bg="#5f6368", fg="#ffffff", activebackground="#80868b", relief="flat", width=5, command=clear).grid(row=5, column=2, sticky="nsew", padx=4, pady=4, ipady=7)
+    tk.Button(root, text="=", font=("Segoe UI", 14, "bold"), bg="#8ab4f8", fg="#202124", activebackground="#aecbfa", relief="flat", width=5, command=calculate).grid(row=5, column=3, sticky="nsew", padx=4, pady=4, ipady=7)
+    for column in range(4):
+        root.grid_columnconfigure(column, weight=1)
+    for row in range(1, 6):
+        root.grid_rowconfigure(row, weight=1)
     display.focus_set()
     root.bind("<Return>", lambda _event: calculate())
+    root.bind("<Escape>", lambda _event: clear())
     root.mainloop()
