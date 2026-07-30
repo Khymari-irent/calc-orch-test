@@ -17,6 +17,8 @@ def launch() -> None:
     expression = tk.StringVar()
     display = tk.Entry(root, textvariable=expression, justify="right", font=("Segoe UI", 22), bg="#303134", fg="#f8f9fa", insertbackground="#f8f9fa", relief="flat", width=16)
     display.grid(row=0, column=0, columnspan=4, sticky="nsew", padx=4, pady=(4, 14), ipady=8)
+    history = tk.Listbox(root, height=4, bg="#202124", fg="#bdc1c6", highlightthickness=0, relief="flat", activestyle="none")
+    history.grid(row=1, column=0, columnspan=4, sticky="nsew", padx=4, pady=(0, 10))
 
     def append(value: str) -> None:
         expression.set(expression.get() + value)
@@ -28,16 +30,20 @@ def launch() -> None:
         expression.set(expression.get()[:-1])
 
     def calculate() -> None:
+        original = expression.get()
         try:
-            expression.set(str(evaluate(expression.get())))
+            result = evaluate(original)
+            expression.set(str(result))
+            history.insert(tk.END, f"{original} = {result}")
+            history.yview_moveto(1)
         except CalculatorError as error:
             messagebox.showerror("Calculator error", str(error), parent=root)
 
-    buttons = [(".", 1, 0), ("Clear", 1, 1), ("<", 1, 2), ("/", 1, 3),
-               ("7", 2, 0), ("8", 2, 1), ("9", 2, 2), ("*", 2, 3),
-               ("4", 3, 0), ("5", 3, 1), ("6", 3, 2), ("-", 3, 3),
-               ("1", 4, 0), ("2", 4, 1), ("3", 4, 2), ("+", 4, 3),
-               ("0", 5, 0), ("(", 5, 1), (")", 5, 2), ("=", 5, 3)]
+    buttons = [(".", 2, 0), ("Clear", 2, 1), ("<", 2, 2), ("/", 2, 3),
+               ("7", 3, 0), ("8", 3, 1), ("9", 3, 2), ("*", 3, 3),
+               ("4", 4, 0), ("5", 4, 1), ("6", 4, 2), ("-", 4, 3),
+               ("1", 5, 0), ("2", 5, 1), ("3", 5, 2), ("+", 5, 3),
+               ("0", 6, 0), ("(", 6, 1), (")", 6, 2), ("=", 6, 3)]
     for label, row, column in buttons:
         command = {"Clear": clear, "<": backspace, "=": calculate}.get(label, lambda value=label: append(value))
         background = "#8ab4f8" if label == "=" else "#5f6368" if label == "Clear" else "#3c4043"
@@ -45,7 +51,7 @@ def launch() -> None:
         tk.Button(root, text=label, font=("Segoe UI", 14), bg=background, fg=foreground, activebackground="#aecbfa", activeforeground="#202124", relief="flat", width=5, command=command).grid(row=row, column=column, sticky="nsew", padx=4, pady=4, ipady=7)
     for column in range(4):
         root.grid_columnconfigure(column, weight=1)
-    for row in range(1, 6):
+    for row in range(2, 7):
         root.grid_rowconfigure(row, weight=1)
     display.focus_set()
     root.bind("<Return>", lambda _event: calculate())
