@@ -19,6 +19,8 @@ def launch() -> None:
     display.grid(row=0, column=0, columnspan=4, sticky="nsew", padx=4, pady=(4, 14), ipady=8)
     history_frame = tk.Frame(root, bg="#202124")
     history = tk.Listbox(history_frame, height=4, bg="#202124", fg="#bdc1c6", highlightthickness=0, relief="flat", activestyle="none")
+    scrollbar = tk.Scrollbar(history_frame, orient="vertical", command=history.yview)
+    history.configure(yscrollcommand=scrollbar.set)
     history_entries: list[str] = []
     history.pack(side="left", fill="both", expand=True)
 
@@ -38,11 +40,14 @@ def launch() -> None:
             expression.set(str(result))
             history_entries.append(f"{original} = {result}")
             history.delete(0, tk.END)
-            visible_entries = history_entries[-4:] if len(history_entries) <= 4 else history_entries[-3:] + ["... scroll to see more"]
-            for entry in visible_entries:
+            for entry in history_entries:
                 history.insert(tk.END, entry)
             if history_frame.winfo_manager() == "":
                 history_frame.grid(row=1, column=0, columnspan=4, sticky="nsew", padx=4, pady=(0, 10))
+            if len(history_entries) > 4 and scrollbar.winfo_manager() == "":
+                scrollbar.pack(side="right", fill="y", padx=(6, 0))
+            elif len(history_entries) <= 4 and scrollbar.winfo_manager():
+                scrollbar.pack_forget()
         except CalculatorError as error:
             messagebox.showerror("Calculator error", str(error), parent=root)
 
