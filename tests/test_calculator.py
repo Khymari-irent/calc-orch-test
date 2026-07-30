@@ -60,7 +60,7 @@ def test_calculate_rejects_division_by_zero() -> None:
 
 @pytest.mark.parametrize(
     ("expression", "expected"),
-    [("2 + 3 * 4", Decimal("14")), ("(10 - 2) / 4", Decimal("2")), ("-2 * (3 + 4)", Decimal("-14"))],
+    [("2 + 3 * 4", Decimal("14")), ("(10 - 2) / 4", Decimal("2")), ("-2 * (3 + 4)", Decimal("-14")), (".2 + .2", Decimal("0.4"))],
 )
 def test_evaluate_supports_precedence_and_parentheses(expression: str, expected: Decimal) -> None:
     assert evaluate(expression) == expected
