@@ -10,18 +10,18 @@ interface.
 
 ## Run the CLI
 
-Use two operands and one operator:
+Use one or more operations with standard precedence and parentheses:
 
 ```text
-python -m calculator <left> <operator> <right>
+python -m calculator "<expression>"
 ```
 
 Examples:
 
 ```text
-python -m calculator 12 + 5
-python -m calculator 20 / 4
-python -m calculator -5 '*' 2.5
+python -m calculator "12 + 5"
+python -m calculator "2 + 3 * 4"
+python -m calculator "(10 - 2) / 4"
 python -m calculator --help
 ```
 

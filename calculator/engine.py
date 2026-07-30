@@ -1,5 +1,6 @@
 """UI-independent arithmetic operations for the calculator."""
 
+import re
 from decimal import Decimal, DecimalException, InvalidOperation, localcontext
 from typing import TypeAlias
 
@@ -22,6 +23,10 @@ class UnsupportedOperatorError(CalculatorError):
 
 class DivisionByZeroError(CalculatorError):
     """Raised when division is requested with a zero right operand."""
+
+
+class ExpressionError(CalculatorError):
+    """Raised when an expression cannot be parsed or evaluated."""
 
 
 def calculate(left: NumberInput, operator: str, right: NumberInput) -> Decimal:
@@ -72,3 +77,63 @@ def _parse_number(value: NumberInput) -> Decimal:
         )
 
     return number
+
+
+def evaluate(expression: str) -> Decimal:
+    """Evaluate a basic arithmetic expression with precedence and parentheses."""
+
+    tokens = re.findall(r"\d+(?:\.\d+)?|[()+\-*/]", expression.replace(" ", ""))
+    compact = expression.replace(" ", "")
+    if not tokens or re.search(r"\d\s+\d", expression) or "".join(tokens) != compact:
+        raise ExpressionError("Invalid expression. Use numbers, parentheses, and +, -, *, /.")
+
+    values: list[Decimal] = []
+    operators: list[str] = []
+    precedence = {"+": 1, "-": 1, "*": 2, "/": 2}
+
+    def apply_operator() -> None:
+        if len(values) < 2 or not operators:
+            raise ExpressionError("Malformed expression.")
+        operator = operators.pop()
+        right, left = values.pop(), values.pop()
+        values.append(calculate(left, operator, right))
+
+    expect_value = True
+    for token in tokens:
+        if token[0].isdigit():
+            if not expect_value:
+                raise ExpressionError("Malformed expression.")
+            values.append(_parse_number(token))
+            expect_value = False
+        elif token == "(":
+            if not expect_value:
+                raise ExpressionError("Malformed expression.")
+            operators.append(token)
+        elif token == ")":
+            if expect_value:
+                raise ExpressionError("Malformed expression.")
+            while operators and operators[-1] != "(":
+                apply_operator()
+            if not operators:
+                raise ExpressionError("Unmatched closing parenthesis.")
+            operators.pop()
+        else:
+            if expect_value:
+                if token == "-":
+                    values.append(Decimal(0))
+                else:
+                    raise ExpressionError("Malformed expression.")
+            while operators and operators[-1] != "(" and precedence[operators[-1]] >= precedence[token]:
+                apply_operator()
+            operators.append(token)
+            expect_value = True
+
+    if expect_value:
+        raise ExpressionError("Malformed expression.")
+    while operators:
+        if operators[-1] == "(":
+            raise ExpressionError("Unmatched opening parenthesis.")
+        apply_operator()
+    if len(values) != 1:
+        raise ExpressionError("Malformed expression.")
+    return values[0]

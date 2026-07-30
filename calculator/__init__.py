@@ -3,6 +3,7 @@
 from .engine import (
     CalculatorError,
     DivisionByZeroError,
+    ExpressionError,
     InvalidNumberError,
     UnsupportedOperatorError,
     calculate,
@@ -11,7 +12,9 @@ from .engine import (
 __all__ = [
     "CalculatorError",
     "DivisionByZeroError",
+    "ExpressionError",
     "InvalidNumberError",
     "UnsupportedOperatorError",
     "calculate",
+    "evaluate",
 ]

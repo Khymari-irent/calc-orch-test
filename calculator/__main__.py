@@ -4,7 +4,7 @@ import argparse
 from collections.abc import Sequence
 from decimal import Decimal
 
-from .engine import CalculatorError, calculate
+from .engine import CalculatorError, evaluate
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -14,9 +14,7 @@ def build_parser() -> argparse.ArgumentParser:
         prog="calculator",
         description="Calculate one expression with two operands and a basic operator.",
     )
-    parser.add_argument("left", help="left integer or decimal operand")
-    parser.add_argument("operator", help="one of: +, -, *, /")
-    parser.add_argument("right", help="right integer or decimal operand")
+    parser.add_argument("expression", nargs="+", help="arithmetic expression")
     return parser
 
 
@@ -35,7 +33,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     arguments = parser.parse_args(argv)
 
     try:
-        result = calculate(arguments.left, arguments.operator, arguments.right)
+        result = evaluate(" ".join(arguments.expression))
     except CalculatorError as error:
         parser.error(str(error))
 
