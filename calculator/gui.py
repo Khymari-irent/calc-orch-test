@@ -19,6 +19,10 @@ def launch() -> None:
     display = tk.Entry(root, textvariable=expression, justify="right", font=("Segoe UI", 22), bg="#303134", fg="#f8f9fa", insertbackground="#f8f9fa", relief="flat", width=16)
     display.grid(row=0, column=0, columnspan=4, sticky="nsew", padx=4, pady=(4, 8), ipady=8)
     tk.Checkbutton(root, text="Degrees", variable=angle_mode, onvalue="degrees", offvalue="radians", bg="#202124", fg="#f8f9fa", selectcolor="#303134", activebackground="#202124", activeforeground="#ffffff").grid(row=1, column=0, columnspan=4, sticky="w", padx=4, pady=(0, 8))
+    scientific_frame = tk.Frame(root, bg="#202124")
+    scientific_buttons = [("sin", "sin("), ("cos", "cos("), ("tan", "tan("), ("√", "sqrt("), ("sin⁻¹", "asin("), ("cos⁻¹", "acos("), ("tan⁻¹", "atan("), ("1/x", "reciprocal("), ("x²", "square("), ("1/√x", "invsqrt("), ("log", "log("), ("ln", "ln("), ("abs", "abs(")]
+    for index, (label, value) in enumerate(scientific_buttons):
+        tk.Button(scientific_frame, text=label, font=("Segoe UI", 10), bg="#5f6368", fg="#ffffff", activebackground="#80868b", relief="flat", command=lambda item=value: append(item)).grid(row=index // 4, column=index % 4, sticky="nsew", padx=3, pady=3, ipady=4)
     history_frame = tk.Frame(root, bg="#202124")
     history = tk.Listbox(history_frame, height=4, bg="#202124", fg="#bdc1c6", highlightthickness=0, relief="flat", activestyle="none")
     scrollbar = tk.Scrollbar(history_frame, orient="vertical", command=history.yview)
@@ -70,4 +74,6 @@ def launch() -> None:
     display.focus_set()
     root.bind("<Return>", lambda _event: calculate())
     root.bind("<Escape>", lambda _event: clear())
+    root.bind("<KeyPress-Shift_L>", lambda _event: scientific_frame.grid(row=8, column=0, columnspan=4, sticky="nsew", padx=4, pady=4))
+    root.bind("<KeyRelease-Shift_L>", lambda _event: scientific_frame.grid_remove())
     root.mainloop()
