@@ -17,8 +17,11 @@ def launch() -> None:
     expression = tk.StringVar()
     display = tk.Entry(root, textvariable=expression, justify="right", font=("Segoe UI", 22), bg="#303134", fg="#f8f9fa", insertbackground="#f8f9fa", relief="flat", width=16)
     display.grid(row=0, column=0, columnspan=4, sticky="nsew", padx=4, pady=(4, 14), ipady=8)
-    history = tk.Listbox(root, height=4, bg="#202124", fg="#bdc1c6", highlightthickness=0, relief="flat", activestyle="none")
-    history.grid(row=1, column=0, columnspan=4, sticky="nsew", padx=4, pady=(0, 10))
+    history_frame = tk.Frame(root, bg="#202124")
+    history = tk.Listbox(history_frame, height=4, bg="#202124", fg="#bdc1c6", highlightthickness=0, relief="flat", activestyle="none", yscrollcommand=lambda first, last: scrollbar.set(first, last))
+    scrollbar = tk.Scrollbar(history_frame, orient="vertical", command=history.yview)
+    history.pack(side="left", fill="both", expand=True)
+    scrollbar.pack(side="right", fill="y")
 
     def append(value: str) -> None:
         expression.set(expression.get() + value)
@@ -35,6 +38,8 @@ def launch() -> None:
             result = evaluate(original)
             expression.set(str(result))
             history.insert(tk.END, f"{original} = {result}")
+            if history_frame.winfo_manager() == "":
+                history_frame.grid(row=1, column=0, columnspan=4, sticky="nsew", padx=4, pady=(0, 10))
             history.yview_moveto(1)
         except CalculatorError as error:
             messagebox.showerror("Calculator error", str(error), parent=root)
