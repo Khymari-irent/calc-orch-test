@@ -55,6 +55,14 @@ The planned GUI will reuse the same engine in a later MVP.
 
 Run the offline checks in [TESTING.md](TESTING.md).
 
+## Launch the GUI
+
+On systems with Tkinter available:
+
+```text
+python -m calculator --gui
+```
+
 ## License
 
 MIT

@@ -17,6 +17,7 @@ python -m compileall -q calculator
 python -m pytest
 python -m calculator --help
 python -m calculator
+python -m calculator --gui
 git diff --check
 ```
 

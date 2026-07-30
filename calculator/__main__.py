@@ -16,6 +16,7 @@ def build_parser() -> argparse.ArgumentParser:
         description="Calculate one expression with two operands and a basic operator.",
     )
     parser.add_argument("expression", nargs="*", help="arithmetic expression")
+    parser.add_argument("--gui", action="store_true", help="launch the graphical calculator")
     return parser
 
 
@@ -32,6 +33,12 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     parser = build_parser()
     arguments = parser.parse_args(argv)
+
+    if arguments.gui:
+        from .gui import launch
+
+        launch()
+        return 0
 
     if not arguments.expression:
         return interactive()
