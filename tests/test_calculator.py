@@ -97,6 +97,37 @@ def test_cli_help_is_available() -> None:
     assert result.stderr == ""
 
 
+def test_interactive_mode_supports_ans_and_quit() -> None:
+    result = subprocess.run(
+        [sys.executable, "-m", "calculator"],
+        cwd=PROJECT_ROOT,
+        input="2 + 3 * 4\nAns + 10\nquit\n",
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+
+    assert result.returncode == 0
+    assert "14" in result.stdout
+    assert "24" in result.stdout
+
+
+def test_interactive_mode_keeps_running_after_errors() -> None:
+    result = subprocess.run(
+        [sys.executable, "-m", "calculator"],
+        cwd=PROJECT_ROOT,
+        input="Ans + 1\n2 + 2\nAns * 3\nquit\n",
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+
+    assert result.returncode == 0
+    assert "Ans is not available" in result.stdout
+    assert "4" in result.stdout
+    assert "12" in result.stdout
+
+
 @pytest.mark.parametrize(
     ("arguments", "message"),
     [
