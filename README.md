@@ -1,33 +1,47 @@
 # calc-orch-test
 
-A planned calculator application with command-line and graphical interfaces
-sharing one calculation engine.
+A small Python calculator with a reusable arithmetic engine and command-line
+interface.
 
-## Status
+## Requirements
 
-**Planned**
+- Python 3.11 or later
+- No runtime dependencies or network access
 
-Implemented: repository governance and delivery controls only.
+## Run the CLI
 
-Planned: MVP 1 provides a CLI calculator; MVP 2 adds a GUI over the same
-calculation engine. See [PRD.md](PRD.md) for the current requirements.
+Use two operands and one operator:
 
-## Why it exists
+```text
+python -m calculator <left> <operator> <right>
+```
 
-The project is a small, testable calculator for people who need reliable basic
-arithmetic and for developers evaluating an incremental delivery workflow.
+Examples:
+
+```text
+python -m calculator 12 + 5
+python -m calculator 20 / 4
+python -m calculator -5 '*' 2.5
+python -m calculator --help
+```
+
+The supported operators are `+`, `-`, `*`, and `/`. Operands may be integers,
+decimals, or negative numbers. Invalid operands, unsupported operators, missing
+arguments, and division by zero produce an error and a non-zero exit code.
+
+The engine uses Python's decimal arithmetic with 28 significant digits for
+division. The CLI handles one operation at a time; chained expressions are not
+part of this MVP.
 
 ## Architecture
 
-The planned product separates calculation rules from CLI and GUI presentation
-layers. No runtime or toolkit has been selected yet.
+`calculator.engine` contains the UI-independent calculation rules.
+`calculator.__main__` parses command-line arguments and displays the result.
+The planned GUI will reuse the same engine in a later MVP.
 
-## Getting started
+## Verification
 
-No application runtime, setup command, or run command has been selected. The
-first buildable slice will document the supported toolchain and commands.
-
-For delivery verification, see [TESTING.md](TESTING.md).
+Run the offline checks in [TESTING.md](TESTING.md).
 
 ## License
 
