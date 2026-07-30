@@ -22,7 +22,6 @@ The product should provide reliable basic arithmetic, clear input validation, us
 - Scientific, financial, graphing, or programmable-calculator features.
 - Persistence of calculation history.
 - User accounts, networking, cloud services, or external APIs.
-- Advanced expression parsing unless explicitly added in a later release.
 
 ## 4. Target users
 
@@ -50,19 +49,21 @@ The engine should expose a small interface that does not depend on CLI or GUI li
 The CLI must:
 
 1. Start from a documented command.
-2. Accept two operands and an operator.
+2. Accept and evaluate expressions containing one or more operations and parentheses, using standard operator precedence.
 3. Display the calculated result.
-4. Display a clear error for unsupported operators, malformed numbers, missing arguments, and division by zero.
+4. Display a clear error for malformed expressions, unsupported syntax, invalid numbers, and division by zero.
 5. Return a non-zero process exit code when the request cannot be completed.
 6. Support a help or usage message.
 7. Exit cleanly without requiring network access or persistent storage.
 
-The initial CLI may use positional arguments such as:
+One-shot CLI usage is:
 
 ```text
-calculator 12 + 5
-calculator 20 / 4
+python -m calculator "2 + 3 * 4"
+python -m calculator "(10 - 2) / 4"
 ```
+
+Running `python -m calculator` with no expression starts interactive mode. Interactive mode repeatedly accepts expressions, supports `Ans` as the previous successful result, prints clear errors without terminating the session, and exits when the user enters `quit`.
 
 ### MVP 2: GUI calculator
 
@@ -120,11 +121,19 @@ The GUI must:
 
 ### MVP 1 delivery slices
 
-1. Define the calculation engine interface.
-2. Implement arithmetic operations and validation.
-3. Implement CLI argument parsing and error handling.
-4. Add automated tests.
-5. Document usage and run instructions.
+1. Define and implement the shared expression tokenizer/parser/evaluator.
+2. Implement one-shot multi-operation CLI evaluation with parentheses and precedence.
+3. Add automated tests for expressions, precedence, parentheses, errors, and division by zero.
+4. Implement interactive mode with `Ans`, `quit`, and persistent error handling.
+5. Document one-shot and interactive usage.
+
+#### MVP-001-S002: Expression evaluation
+
+Deliver multi-operation one-shot expressions, parentheses, standard precedence, validation, and automated tests while preserving existing basic arithmetic behavior.
+
+#### MVP-001-S003: Interactive calculator
+
+Deliver interactive mode launched by `python -m calculator`, repeated expression evaluation, `Ans` for the previous successful result, `quit` to exit, session-safe errors, tests, and documentation.
 
 ### MVP 2 delivery slices
 
@@ -149,4 +158,3 @@ The GUI must:
 - Scientific operations
 - Configurable number formatting
 - Packaging as a desktop executable
-

@@ -12,6 +12,7 @@ from calculator.engine import (
     InvalidNumberError,
     UnsupportedOperatorError,
     calculate,
+    evaluate,
 )
 
 
@@ -58,6 +59,20 @@ def test_calculate_rejects_division_by_zero() -> None:
 
 
 @pytest.mark.parametrize(
+    ("expression", "expected"),
+    [("2 + 3 * 4", Decimal("14")), ("(10 - 2) / 4", Decimal("2")), ("-2 * (3 + 4)", Decimal("-14"))],
+)
+def test_evaluate_supports_precedence_and_parentheses(expression: str, expected: Decimal) -> None:
+    assert evaluate(expression) == expected
+
+
+@pytest.mark.parametrize("expression", ["2 +", "(2 + 3", "2 ** 3", "2 3"])
+def test_evaluate_rejects_malformed_expressions(expression: str) -> None:
+    with pytest.raises(ValueError):
+        evaluate(expression)
+
+
+@pytest.mark.parametrize(
     ("arguments", "expected"),
     [
         (["7", "+", "3"], "10"),
@@ -85,10 +100,10 @@ def test_cli_help_is_available() -> None:
 @pytest.mark.parametrize(
     ("arguments", "message"),
     [
-        (["not-a-number", "+", "1"], "Invalid number"),
-        (["4", "%", "2"], "Unsupported operator"),
+        (["not-a-number", "+", "1"], "Invalid expression"),
+        (["4", "%", "2"], "Invalid expression"),
         (["4", "/", "0"], "Division by zero"),
-        (["4", "+"], "the following arguments are required: right"),
+        (["4", "+"], "Malformed expression"),
     ],
 )
 def test_cli_rejects_invalid_requests(arguments: list[str], message: str) -> None:
