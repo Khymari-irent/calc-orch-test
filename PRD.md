@@ -137,11 +137,25 @@ Deliver interactive mode launched by `python -m calculator`, repeated expression
 
 ### MVP 2 delivery slices
 
-1. Select and configure a lightweight GUI toolkit.
-2. Build the calculator layout and display.
-3. Connect GUI actions to the shared calculation engine.
-4. Add input-state and error handling.
-5. Add GUI smoke tests and update documentation.
+#### MVP-002-S001: GUI foundation
+
+Select and configure a lightweight GUI toolkit, build the calculator layout and display, connect GUI actions to the shared calculation engine, add input-state and error handling, and document launch instructions.
+
+#### MVP-002-S002: Styling and UX polish
+
+Improve visual hierarchy, spacing, typography, button states, keyboard usability, focus behavior, and responsive layout without changing calculation semantics.
+
+#### MVP-002-S003: Calculation history
+
+Show completed calculations in a session-local history view with clear behavior, bounded memory use, and no persistence requirement.
+
+#### MVP-002-S004: Scientific functions
+
+Add an explicitly defined, testable set of scientific operations while preserving basic arithmetic, precedence, error handling, and the shared engine boundary.
+
+#### MVP-002-S005: Packaging and distribution
+
+Provide documented packaging and local distribution artifacts for supported platforms, with reproducible build commands and no embedded secrets or production deployment.
 
 ## 10. Risks and mitigations
 
