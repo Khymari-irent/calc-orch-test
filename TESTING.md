@@ -16,6 +16,7 @@ Run these commands from the repository root:
 python -m compileall -q calculator
 python -m pytest
 python -m calculator --help
+python -m calculator
 git diff --check
 ```
 
@@ -37,6 +38,7 @@ print a clear error and return a non-zero exit code.
 
 - The CLI accepts exactly two operands and one operator.
 - Chained expressions and GUI functionality are deferred to later MVP slices.
+- Interactive mode uses `Ans` for the previous successful result and `quit` to exit.
 
 ## Environment rules
 

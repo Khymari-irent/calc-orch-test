@@ -25,6 +25,18 @@ python -m calculator "(10 - 2) / 4"
 python -m calculator --help
 ```
 
+Start interactive mode with no expression. Enter `Ans` to reuse the previous
+successful result, and `quit` to exit:
+
+```text
+python -m calculator
+calculator> 2 + 3 * 4
+14
+calculator> Ans + 10
+24
+calculator> quit
+```
+
 The supported operators are `+`, `-`, `*`, and `/`. Operands may be integers,
 decimals, or negative numbers. Invalid operands, unsupported operators, missing
 arguments, and division by zero produce an error and a non-zero exit code.
