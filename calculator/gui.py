@@ -38,7 +38,6 @@ def launch() -> None:
     history_entries: list[str] = []
     history_frame.configure(height=72)
     history_frame.grid_propagate(False)
-    history.pack(side="left", fill="both", expand=True)
     history_frame.grid(row=9, column=0, columnspan=4, sticky="nsew", padx=4, pady=(8, 0))
 
     def recall_history(_event: tk.Event) -> None:
@@ -63,6 +62,8 @@ def launch() -> None:
             result = evaluate(original, angle_mode.get())
             expression.set(str(result))
             history_entries.append(f"{original} = {result}")
+            if history.winfo_manager() == "":
+                history.pack(side="left", fill="both", expand=True)
             history.delete(0, tk.END)
             for entry in history_entries:
                 history.insert(tk.END, entry)
@@ -88,6 +89,7 @@ def launch() -> None:
         root.grid_columnconfigure(column, weight=1, uniform="keypad")
     for row in range(4, 9):
         root.grid_rowconfigure(row, weight=1)
+    root.grid_rowconfigure(2, weight=1)
     root.grid_rowconfigure(9, weight=0)
     display.focus_set()
     root.bind("<Return>", lambda _event: calculate())
