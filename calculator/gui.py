@@ -22,8 +22,12 @@ def launch() -> None:
     scientific_frame = tk.Frame(root, bg="#202124")
     scientific_buttons = [("sin", "sin(", "asin", "asin("), ("cos", "cos(", "acos", "acos("), ("tan", "tan(", "atan", "atan("), ("√", "sqrt(", "1/√x", "invsqrt("), ("x²", "square(", "1/x", "reciprocal("), ("log", "log(", "exp", "exp("), ("ln", "ln(", "eˣ", "exp("), ("abs", "abs(", "abs", "abs(")]
     scientific_widgets = []
+    for column in range(4):
+        scientific_frame.grid_columnconfigure(column, weight=1, uniform="keypad")
+    for row in range((len(scientific_buttons) + 3) // 4):
+        scientific_frame.grid_rowconfigure(row, weight=1, uniform="keypad")
     for index, (label, value, inverse_label, inverse_value) in enumerate(scientific_buttons):
-        button = tk.Button(scientific_frame, text=label, font=("Segoe UI", 14), bg="#5f6368", fg="#ffffff", activebackground="#80868b", relief="flat", command=lambda item=value: append(item))
+        button = tk.Button(scientific_frame, text=label, font=("Segoe UI", 14), width=5, bg="#5f6368", fg="#ffffff", activebackground="#80868b", relief="flat", command=lambda item=value: append(item))
         button.grid(row=index // 4, column=index % 4, sticky="nsew", padx=4, pady=4, ipady=7)
         scientific_widgets.append((button, (label, value), (inverse_label, inverse_value)))
     scientific_frame.grid(row=2, column=0, columnspan=4, sticky="nsew", padx=4, pady=4)
@@ -72,7 +76,7 @@ def launch() -> None:
         foreground = "#202124" if label == "=" else "#ffffff"
         tk.Button(root, text=label, font=("Segoe UI", 14), bg=background, fg=foreground, activebackground="#aecbfa", activeforeground="#202124", relief="flat", width=5, command=command).grid(row=row, column=column, sticky="nsew", padx=4, pady=4, ipady=7)
     for column in range(4):
-        root.grid_columnconfigure(column, weight=1)
+        root.grid_columnconfigure(column, weight=1, uniform="keypad")
     for row in range(4, 9):
         root.grid_rowconfigure(row, weight=1)
     display.focus_set()
