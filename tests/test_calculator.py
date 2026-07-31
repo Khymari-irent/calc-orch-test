@@ -73,6 +73,14 @@ def test_evaluate_rejects_malformed_expressions(expression: str) -> None:
 
 
 @pytest.mark.parametrize(
+    ("expression", "expected"),
+    [("sqrt(9)", Decimal("3")), ("square(4)", Decimal("16")), ("abs(-5)", Decimal("5"))],
+)
+def test_evaluate_supports_scientific_functions(expression: str, expected: Decimal) -> None:
+    assert evaluate(expression) == expected
+
+
+@pytest.mark.parametrize(
     ("arguments", "expected"),
     [
         (["7", "+", "3"], "10"),
