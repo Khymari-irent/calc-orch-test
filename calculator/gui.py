@@ -36,7 +36,10 @@ def launch() -> None:
     scrollbar = tk.Scrollbar(history_frame, orient="vertical", command=history.yview)
     history.configure(yscrollcommand=scrollbar.set)
     history_entries: list[str] = []
+    history_frame.configure(height=72)
+    history_frame.grid_propagate(False)
     history.pack(side="left", fill="both", expand=True)
+    history_frame.grid(row=9, column=0, columnspan=4, sticky="nsew", padx=4, pady=(8, 0))
 
     def append(value: str) -> None:
         expression.set(expression.get() + value)
@@ -56,8 +59,6 @@ def launch() -> None:
             history.delete(0, tk.END)
             for entry in history_entries:
                 history.insert(tk.END, entry)
-            if history_frame.winfo_manager() == "":
-                history_frame.grid(row=3, column=0, columnspan=4, sticky="nsew", padx=4, pady=(0, 10))
             if len(history_entries) > 4 and scrollbar.winfo_manager() == "":
                 scrollbar.pack(side="right", fill="y", padx=(6, 0))
             elif len(history_entries) <= 4 and scrollbar.winfo_manager():
@@ -79,6 +80,7 @@ def launch() -> None:
         root.grid_columnconfigure(column, weight=1, uniform="keypad")
     for row in range(4, 9):
         root.grid_rowconfigure(row, weight=1)
+    root.grid_rowconfigure(9, weight=0)
     display.focus_set()
     root.bind("<Return>", lambda _event: calculate())
     root.bind("<Escape>", lambda _event: clear())
