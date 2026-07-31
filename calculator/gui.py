@@ -41,6 +41,13 @@ def launch() -> None:
     history.pack(side="left", fill="both", expand=True)
     history_frame.grid(row=9, column=0, columnspan=4, sticky="nsew", padx=4, pady=(8, 0))
 
+    def recall_history(_event: tk.Event) -> None:
+        selection = history.curselection()
+        if selection:
+            expression.set(history_entries[selection[0]].split(" = ", 1)[1])
+
+    history.bind("<<ListboxSelect>>", recall_history)
+
     def append(value: str) -> None:
         expression.set(expression.get() + value)
 
@@ -59,6 +66,7 @@ def launch() -> None:
             history.delete(0, tk.END)
             for entry in history_entries:
                 history.insert(tk.END, entry)
+            history.configure(bg="#202124")
             if len(history_entries) > 4 and scrollbar.winfo_manager() == "":
                 scrollbar.pack(side="right", fill="y", padx=(6, 0))
             elif len(history_entries) <= 4 and scrollbar.winfo_manager():
